@@ -13,7 +13,6 @@ const userSchema = mongoose.Schema({
     upiID: { type: String, required: true, unique: true },
     txnID: { type: String, required: true, unique: true },
     screenshot: {type: String, required: true},
-    hackathon: {type: Boolean}
 }, {timestamps: true});
   
 const userdb = mongoose.model("users", userSchema); 
