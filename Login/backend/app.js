@@ -8,6 +8,7 @@ const passport = require("passport")
 const OAuth2Strategy = require("passport-google-oauth2").Strategy
 require("./database/connection")
 const userdb = require("./model/userSchema")
+const hackathon = require("./model/hackathonSchema")
 
 //in dotenv
 const clientid = process.env.CLIENT_ID
@@ -56,7 +57,6 @@ passport.use(
                         upiID: "null",
                         txnID: "null",
                         screenshot: "null",
-                        hackathon: false
                     });
 
                     await user.save();
@@ -133,6 +133,19 @@ app.patch('/register/:id', async (req, res) => {
             console.log(error.message);
         }
     })
+
+app.post('/hackathon-registration', async (req, res) => {
+    try{
+        team = new hackathon(
+            req.body,
+        );
+
+        await team.save();
+        res.status(200).json(team)
+    } catch(error){
+        res.status(400).json({ error: error.message })
+    }
+})
 
 app.listen(PORT, () => {
     console.log(`server start at port no ${PORT}`)
