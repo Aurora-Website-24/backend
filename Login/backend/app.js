@@ -102,48 +102,51 @@ app.get("/logout", (req, res, next) => {
     })
 })
 
-const router = express.Router()
 
 app.patch('/register/:id', async (req, res) => {
-        // const { error } = userdb.validate(req.body);
-        // if (error) return res.status(400).send(error.details[0].message);
+    try {
+        const registered = await userdb.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+        );
+        res.send(registered);
+    } catch (error) {
+        res.status(500).send(error.message);
+        console.log(error.message);
+    }
+})
 
-        // const user = await userdb.findById(req.params.id);
-        // if (!user) return res.status(404).send("User not found...");
-        // const { name, phoneNo, regNo, branch, learnerid, upiID, txnID, screenshot } = req.body;
+app.get('/hackathon-team-data', async (req, res) => {
+    try {
+        const teamData = await hackathon.hackathons.findOne({leaderRegNo: req.body.formData.leaderRegNo})
+    } catch (error) {
 
-        try {
-            const registered = await userdb.findByIdAndUpdate(
-                req.params.id,
-                req.body,
-                // {
-                //     branch,
-                //     learnerid,
-                //     name,
-                //     phoneNo,
-                //     regNo,
-                //     screenshot,
-                //     txnID,
-                //     upiID
-                // },
-                );
-            res.send(registered);
-        } catch (error) {
-            res.status(500).send(error.message);
-            console.log(error.message);
-        }
-    })
+    }
+})
 
 app.post('/hackathon-registration', async (req, res) => {
-    try{
+    try {
         team = new hackathon(
             req.body,
         );
 
         await team.save();
         res.status(200).json(team)
-    } catch(error){
+    } catch (error) {
         res.status(400).json({ error: error.message })
+    }
+})
+
+app.patch('/hackathon-update-form/:id', async (req, res) => {
+    try {
+        const hackathonUpdate = await hackathon.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+        );
+        res.send(hackathonUpdate);
+    } catch (error) {
+        res.status(500).send(error.message);
+        console.log(error.message);
     }
 })
 
