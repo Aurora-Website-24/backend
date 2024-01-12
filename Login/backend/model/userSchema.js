@@ -14,7 +14,12 @@ const userSchema = mongoose.Schema({
     txnID: { type: String, required: true, unique: true },
     screenshot: {type: String, required: true},
     hackathon: {type: Boolean},
-    selectedWorkshops: { type: [Number], default: [] }
+    selectedWorkshops: [
+        {
+          workshopNumber: { type: Number },
+          timing: { type: String },
+        },
+      ],
 }, {timestamps: true});
   
 const userdb = mongoose.model("users", userSchema); 

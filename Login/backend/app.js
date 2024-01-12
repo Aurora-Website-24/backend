@@ -8,6 +8,7 @@ const passport = require("passport")
 const OAuth2Strategy = require("passport-google-oauth2").Strategy
 require("./database/connection")
 const userdb = require("./model/userSchema")
+const axios = require("axios");
 
 //in dotenv
 const clientid = process.env.CLIENT_ID
@@ -102,9 +103,8 @@ app.get("/logout", (req, res, next) => {
     })
 })
 
-app.get("/getUser/:username", async (req, res) => {
-    const { username } = req.params;
-    const user = await userdb.findOne({ email: username });
+app.get("/getUser", async (req, res) => {
+    const user = req.user;
 
     if (user) {
         res.json({ selectedWorkshops: user.selectedWorkshops });
@@ -113,24 +113,49 @@ app.get("/getUser/:username", async (req, res) => {
     }
 });
 
-app.post("/updateUser/:username", async (req, res) => {
-    const { username } = req.params;
-    const { selectedWorkshops } = req.body;
-
+app.patch("/updateUser", async (req, res) => {
     try {
-        const user = await userdb.findOneAndUpdate(
-            { email: username }, 
-            { $set: { selectedWorkshops } },
-            { new: true }
+        const data =await userdb.findByIdAndUpdate(
+            req.params.id,
+            req.body,
         );
-
-        res.json({ message: 'Workshops updated successfully!', user });
+        res.send(data);
     } catch (error) {
         res.status(500).send(error.message);
-        console.log(error.message);
+        console.log(error.message)
     }
-});
+    
 
+    // const user = req.data;
+    // const { selectedWorkshops } = req.body;
+
+    // if (!user) {
+    //     return res.status(401).json({ message: "Not authenticated" });
+    // }
+
+    // try {
+    //     user.selectedWorkshops = selectedWorkshops;
+    //     await user.save();
+
+    //     res.json({ message: 'Workshops updated successfully!', user });
+    // } catch (error) {
+    //     res.status(500).send(error.message);
+    //     console.log(error.message);
+    // }
+});
+app.get("/api/workshops", (req, res) => {
+    const workshops = [
+      { workshopNumber: 1, timing: 'Morning' },
+      { workshopNumber: 2, timing: 'Afternoon' },
+      { workshopNumber: 3, timing: 'Morning' },
+      { workshopNumber: 4, timing: 'Afternoon' },
+      { workshopNumber: 5, timing: 'Morning' },
+      { workshopNumber: 6, timing: 'Afternoon' },
+      { workshopNumber: 7, timing: 'Morning' },
+      { workshopNumber: 8, timing: 'Afternoon' },
+    ];
+    res.json(workshops);
+  });
 
 const router = express.Router()
 
