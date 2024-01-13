@@ -118,9 +118,16 @@ app.patch('/register/:id', async (req, res) => {
 
 app.get('/hackathon-team-data', async (req, res) => {
     try {
-        const teamData = await hackathon.hackathons.findOne({leaderRegNo: req.body.formData.leaderRegNo})
+        const teamData = await hackathon.hackathons.findOne({ leaderRegNo: req.query.leaderRegNo });
+        
+        if (teamData) {
+            res.status(200).json(teamData);
+        } else {
+            res.status(404).json({ message: 'Team not found' });
+        }
     } catch (error) {
-
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 })
 
