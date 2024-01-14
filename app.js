@@ -96,6 +96,20 @@ app.get("/login/success", async (req, res) => {
     }
 })
 
+app.get('/updated-user-data/:id', async (req, res) => {
+    try {
+        const result = await userdb.findById(req.params.id);
+
+        if (!result) {
+            return res.status(404).json({ message: 'Document not found' });
+        }
+        return res.json(result);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
 app.get("/logout", (req, res, next) => {
     req.logout(function (err) {
         if (err) { return next(err) }
@@ -120,7 +134,7 @@ app.patch('/register/:id', async (req, res) => {
 app.patch('/workshop-registration/:id', async (req, res) => {
     try {
         const registered = await userdb.findByIdAndUpdate(
-            req.params.id, 
+            req.params.id,
             req.body,
         );
         res.send(registered)
@@ -133,7 +147,7 @@ app.patch('/workshop-registration/:id', async (req, res) => {
 app.get('/hackathon-team-data', async (req, res) => {
     try {
         const teamData = await hackathon.hackathons.findOne({ leaderRegNo: req.query.leaderRegNo });
-        
+
         if (teamData) {
             res.status(200).json(teamData);
         } else {
