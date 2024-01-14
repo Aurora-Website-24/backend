@@ -146,18 +146,13 @@ app.patch('/workshop-registration/:id', async (req, res) => {
 
 app.get('/hackathon-team-data', async (req, res) => {
     try {
-        const teamData = await hackathon.hackathons.findOne({ leaderRegNo: req.query.leaderRegNo });
-
-        if (teamData) {
-            res.status(200).json(teamData);
-        } else {
-            res.status(404).json({ message: 'Team not found' });
-        }
+        const teamData = await hackathon.find({ learnerid: req.query.learnerid });
+        res.send(teamData);
     } catch (error) {
-        console.error(error);
+        console.log(error);
         res.status(500).json({ message: 'Internal Server Error' });
     }
-})
+});
 
 app.post('/hackathon-registration', async (req, res) => {
     try {
